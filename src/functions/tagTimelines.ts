@@ -11,7 +11,7 @@ export async function getTagTimeline(
   offset: number | undefined = undefined,
   refTimestamp: number | undefined = undefined,
   getAll: boolean = true
-): Promise<types.TagTimelinePage> {
+): Promise<types.TagTimelinePage | null> {
   let querystring: any[] | string = [];
 
   if (offset) querystring.push(`offset=${offset}`);
@@ -25,11 +25,16 @@ export async function getTagTimeline(
   const response = await ax.get(url);
 
   const $ = cheerio.load(response.data);
+  let page: types.TagTimelinePage | null = null;
+  try {
+    page = JSON.parse($("head script[id=__COHOST_LOADER_STATE__]").text())[
+      "tagged-post-feed"
+    ] as types.TagTimelinePage;
+  } catch (e) {
+    console.log("Error getting offset %d for tag timeline %d", offset, tag);
+  }
 
-  const page = JSON.parse($("head script[id=__COHOST_LOADER_STATE__]").text())[
-    "tagged-post-feed"
-  ] as types.TagTimelinePage;
-
+  if (!page) return null;
   if (getAll) {
     for (const post of page.posts) {
       queuePost(postToPostStub(post));

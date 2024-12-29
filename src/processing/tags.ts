@@ -35,7 +35,9 @@ export async function processTag(tag: string) {
 
   try {
     // this will also queue posts as a side effect
-    const fullTag: types.Tag = tagTimelinePageToTag(await getTagTimeline(tag));
+    const tagTimeline = await getTagTimeline(tag);
+    if (!tagTimeline) throw Error("Tag timeline is null");
+    const fullTag: types.Tag = tagTimelinePageToTag(tagTimeline);
     insertTag(fullTag);
     await getTagsFromTag(fullTag);
     processedTags.add(tag);
