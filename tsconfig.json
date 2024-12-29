@@ -1,0 +1,18 @@
+{
+  "include": ["src/**/*"],
+  "compilerOptions": {
+    "allowJs": true,
+    "outDir": "dist",
+    "rootDir": "src",
+    "esModuleInterop": false,
+    "lib": ["DOM", "ES2015"],
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "strictNullChecks": true,
+    "noImplicitAny": true,
+    "allowSyntheticDefaultImports": true
+  }
+}

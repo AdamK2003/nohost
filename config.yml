@@ -1,0 +1,9 @@
+seeds:
+  posts:
+    - handle: chillin
+      postId: 4923399
+
+ratelimits:
+  posts: 500
+  projects: 500
+  tags: 500
