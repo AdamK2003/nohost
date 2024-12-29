@@ -33,8 +33,7 @@ export function processingPostsCount() {
 
 export function queuePost(postStub: types.PostStub) {
   if (processedPosts.has(postStub.postId)) return;
-  console.log("Queued post", postStub.postId);
-  postQueue.set(postStub.postId, postStub.handle);
+  if(postQueue.set(postStub.postId, postStub.handle)) console.log("Queued post", postStub.postId);
 }
 
 export async function processPost(postStub: types.PostStub) {

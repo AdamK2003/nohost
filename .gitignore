@@ -2,3 +2,4 @@
 node_modules
 dist
 cohost.db
+config.yml

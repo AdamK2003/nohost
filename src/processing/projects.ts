@@ -24,8 +24,7 @@ export function processingProjectsCount() {
 
 export function queueProject(project: types.Project) {
   if (!project || processedProjects.has(project.projectId)) return;
-  console.log("Queued project", project.handle);
-  projectQueue.add(project);
+  if(projectQueue.add(project)) console.log("Queued project", project.handle);
 }
 
 export async function processProject(project: types.Project) {

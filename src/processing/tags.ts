@@ -25,8 +25,7 @@ export function processingTagsCount() {
 
 export function queueTag(tag: string) {
   if (processedTags.has(tag)) return;
-  console.log("Queued tag", tag);
-  tagQueue.add(tag);
+  if(tagQueue.add(tag)) console.log("Queued tag", tag);
 }
 
 export async function processTag(tag: string) {
