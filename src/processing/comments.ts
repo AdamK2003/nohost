@@ -24,6 +24,14 @@ export function processingCommentsCount() {
   return processingComments.size;
 }
 
+export function wasCommentSeen(commentId: string): boolean {
+  return (
+    commentQueue.has(commentId) ||
+    processingComments.has(commentId) ||
+    processedComments.has(commentId)
+  );
+}
+
 export async function queueComments(comments: types.Comment[]) {
   for (const comment of comments) {
     await queueComment(comment);
@@ -31,7 +39,7 @@ export async function queueComments(comments: types.Comment[]) {
 }
 
 export async function queueComment(comment: types.Comment) {
-  if (processedComments.has(comment.comment.commentId)) return;
+  if (wasCommentSeen(comment.comment.commentId)) return;
   await insertComment(comment);
   if (commentQueue.add(comment.comment.commentId))
     console.log("Queued comment", comment.comment.commentId);
@@ -40,7 +48,7 @@ export async function queueComment(comment: types.Comment) {
 export async function processComment(comment: types.Comment) {
   if (processedComments.has(comment.comment.commentId)) return;
   processingComments.add(comment.comment.commentId);
-  queueProject(comment.poster);
+  await queueProject(comment.poster);
   processingComments.delete(comment.comment.commentId);
   processNextComment();
 }

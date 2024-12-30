@@ -23,9 +23,13 @@ export function processingTagsCount() {
   return processingTags.size;
 }
 
-export function queueTag(tag: string) {
-  if (processedTags.has(tag)) return;
-  if(tagQueue.add(tag)) console.log("Queued tag", tag);
+export function wasTagSeen(tag: string): boolean {
+  return tagQueue.has(tag) || processingTags.has(tag) || processedTags.has(tag);
+}
+
+export function queueTag(tag: string, force: boolean = false) {
+  if (!force && wasTagSeen(tag)) return;
+  if (tagQueue.add(tag)) console.log("Queued tag", tag);
 }
 
 export async function processTag(tag: string) {
@@ -35,7 +39,7 @@ export async function processTag(tag: string) {
 
   try {
     // this will also queue posts as a side effect
-    const tagTimeline = await getTagTimeline(tag);
+    const tagTimeline = await getTagTimeline(tag); // network
     if (!tagTimeline) throw Error("Tag timeline is null");
     const fullTag: types.Tag = tagTimelinePageToTag(tagTimeline);
     insertTag(fullTag);
@@ -44,7 +48,7 @@ export async function processTag(tag: string) {
   } catch (e) {
     console.log("Error on tag %d, requeueing", tag);
     console.debug(e);
-    queueTag(tag);
+    queueTag(tag, true);
   }
   await sleep(config.ratelimits?.tags || 500);
   processingTags.delete(tag);

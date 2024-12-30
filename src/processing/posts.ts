@@ -118,6 +118,7 @@ export async function queuePost(post: types.Post) {
 }
 
 export async function processPost(post: types.Post) {
+  if (processedPosts.has(post.postId)) return;
   processingPosts.add(post.postId);
   extractPostsFromPost(post);
   extractProjectsFromPost(post);
