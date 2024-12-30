@@ -1,5 +1,5 @@
 import { ax, config } from "../defs.js";
-import { queuePost } from "../processing/posts.js";
+import { queuePostStub } from "../processing/posts.js";
 import * as types from "../types/types.js";
 import { fetchPost, postToPostStub } from "./posts.js";
 import { sleep } from "./utils.js";
@@ -32,7 +32,7 @@ export async function fetchPostsFromProject(
 
   if (getAll) {
     for (const post of postPage.posts) {
-      queuePost(postToPostStub(post));
+      queuePostStub(postToPostStub(post));
     }
     if (postPage.pagination.morePagesForward) {
       await sleep(config.ratelimits?.projects || 500);

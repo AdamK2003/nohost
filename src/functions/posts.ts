@@ -27,22 +27,7 @@ export async function fetchPost(
   }
 }
 
-export async function maybeFetchPost(
-  post: types.PostStub
-): Promise<types.PostWithComments | null> {
-  const dbPost = await getPost(post);
-  if (dbPost) {
-    const comments = await getComments(post);
-    return {
-      post: dbPost,
-      comments: {
-        comments,
-      },
-    };
-  } else {
-    return fetchPost(post);
-  }
-}
+
 
 export function getPostStubFromUrl(url: string): types.PostStub {
   // URL example: https://cohost.org/iliana/post/45558-so-you-d-like-to-wri

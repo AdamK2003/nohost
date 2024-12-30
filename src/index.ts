@@ -1,7 +1,8 @@
 import {
-  processingPostsCount,
+  processingPostStubCount,
   processNextPost,
-  queuePost,
+  processNextPostStub,
+  queuePostStub,
 } from "./processing/posts.js";
 import {
   processingProjectsCount,
@@ -13,16 +14,19 @@ import {
   queueTag,
 } from "./processing/tags.js";
 import { config } from "./defs.js";
+import { processNextComment } from "./processing/comments.js";
 
 let emptyCounter = 0;
 
 async function queueLoop() {
+  await processNextPostStub();
   await processNextPost();
   await processNextProject();
   await processNextTag();
+  await processNextComment();
 
   if (
-    !processingPostsCount() &&
+    !processingPostStubCount() &&
     !processingProjectsCount() &&
     !processingTagsCount()
   ) {
@@ -30,17 +34,17 @@ async function queueLoop() {
   } else {
     emptyCounter = 0;
   }
-  if (emptyCounter <= 10) {
-    setTimeout(queueLoop, 10000);
+  if (emptyCounter <= 60 / 5) {
+    setTimeout(queueLoop, 5 * 1000);
   }
 }
 
 for (const post of config.seeds.posts || []) {
-  queuePost(post);
+  await queuePostStub(post);
 }
 
 for (const tag of config.seeds.tags || []) {
-  queueTag(tag);
+  await queueTag(tag);
 }
 
 queueLoop();

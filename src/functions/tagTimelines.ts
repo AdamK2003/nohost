@@ -2,7 +2,7 @@ import * as cheerio from "cheerio";
 import * as types from "../types/types.js";
 import { ax, config } from "../defs.js";
 import { time } from "console";
-import { queuePost } from "../processing/posts.js";
+import { queuePostStub } from "../processing/posts.js";
 import { postToPostStub } from "./posts.js";
 import { sleep } from "./utils.js";
 
@@ -44,7 +44,7 @@ export async function getTagTimeline(
   if (!page) return null;
   if (getAll) {
     for (const post of page.posts) {
-      queuePost(postToPostStub(post));
+      queuePostStub(postToPostStub(post));
     }
     sleep(config.ratelimits?.tags || 500);
     if (page.paginationMode.morePagesForward) {
