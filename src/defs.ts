@@ -21,6 +21,7 @@ export interface Config {
     projects?: number;
     tags?: number;
   };
+  maxRetries?: number;
 }
 
 export const config: Config = YAML.parse(readFileSync("config.yml").toString());

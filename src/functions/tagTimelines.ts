@@ -22,16 +22,23 @@ export async function getTagTimeline(
   let url = `/rc/tagged/${tag}`;
   if (querystring != "") url += `?${querystring}`;
 
-  const response = await ax.get(url);
-
-  const $ = cheerio.load(response.data);
   let page: types.TagTimelinePage | null = null;
-  try {
-    page = JSON.parse($("head script[id=__COHOST_LOADER_STATE__]").text())[
-      "tagged-post-feed"
-    ] as types.TagTimelinePage;
-  } catch (e) {
-    console.log("Error getting offset %d for tag timeline %d", offset, tag);
+  let retries = 0;
+  while (!page) {
+    try {
+      const response = await ax.get(url);
+
+      const $ = cheerio.load(response.data);
+
+      page = JSON.parse($("head script[id=__COHOST_LOADER_STATE__]").text())[
+        "tagged-post-feed"
+      ] as types.TagTimelinePage;
+    } catch (e) {
+      console.log("Error getting offset %d for tag timeline %d", offset, tag);
+      retries++;
+      await sleep(1000);
+    }
+    if (retries >= (config.maxRetries || 10)) break;
   }
 
   if (!page) return null;
